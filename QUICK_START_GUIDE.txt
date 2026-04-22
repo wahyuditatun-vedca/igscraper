@@ -1,0 +1,250 @@
+PANDUAN CEPAT PENGGUNAAN SCRAPER MBG RESEARCH
+==============================================
+
+📋 CHECKLIST SEBELUM MEMULAI SCRAPING
+======================================
+
+WAJIB DIKERJAKAN:
+☐ 1. Konsultasi dengan dosen pembimbing (Dr. Arie Qur'ania, M.Kom)
+☐ 2. Dapatkan approval dari komite etika riset universitas
+☐ 3. Dokumentasikan approval dalam proposal penelitian
+☐ 4. Siapkan informed consent/ethical review memo
+
+DATA PRIVACY:
+☐ 1. Pastikan hanya mengambil data publik (captions, public comments)
+☐ 2. Anonimasi SEMUA usernames sebelum analisis
+☐ 3. Tidak mengambil private messages atau data sensitif
+☐ 4. Hapus atau anonymisasi identitas pengguna dalam final report
+
+SETUP TEKNIS:
+☐ 1. Install Instagrapi: pip install instagrapi
+☐ 2. Siapkan akun Instagram (bisa akun terpisah untuk research)
+☐ 3. Edit script dengan username/password Anda
+☐ 4. Test login sebelum menjalankan full scraping
+☐ 5. Siapkan storage yang cukup untuk CSV files
+
+
+🚀 INSTALASI & SETUP CEPAT
+===========================
+
+1. Install dependencies:
+   $ pip install instagrapi
+
+2. Edit file scraper_mbg_research.py:
+   - Line 60: INSTAGRAM_USERNAME = 'your_username'
+   - Line 61: INSTAGRAM_PASSWORD = 'your_password'
+
+3. Customisasi configuration (optional):
+   - Tambah/kurangi hashtags di HASHTAGS list
+   - Adjust POSTS_PER_HASHTAG (default: 500)
+   - Adjust COMMENTS_PER_POST (default: 100)
+   - Adjust TIMEFRAME_DAYS (default: 180 hari)
+
+4. Test login:
+   $ python -c "from instagrapi import Client; c = Client(); c.login('user', 'pass'); print('✓ Login OK')"
+
+5. Run full scraping:
+   $ python scraper_mbg_research.py
+
+   OUTPUT FILES:
+   - mbg_posts_data.csv (captions, metrics)
+   - mbg_comments_data.csv (comments dari posts)
+   - scraping_metadata.json (log penelitian)
+   - scraper_log.txt (detailed logs)
+
+
+📊 MEMAHAMI OUTPUT DATA
+=======================
+
+File: mbg_posts_data.csv
+Kolom:
+- post_id: Unique identifier untuk post
+- caption: Teks dari caption (main content)
+- likes_count: Jumlah likes
+- comments_count: Jumlah comments
+- posted_date: ISO format timestamp
+- posted_timestamp: Unix timestamp
+- hashtags: Hashtag yang digunakan
+- media_type: Photo/Video/Carousel
+- engagement_rate: (likes + comments) / estimated reach
+
+File: mbg_comments_data.csv
+Kolom:
+- post_id: Link ke post_id di mbg_posts_data.csv
+- post_caption_preview: Ringkas caption (50 karakter pertama)
+- comment_id: Unique identifier untuk comment
+- comment_text: Isi komentar
+- comment_likes: Likes pada komentar tersebut
+- user_id_anonymized: Username di-hash (bukan actual username)
+- timestamp: Kapan komentar dibuat
+- reply_count: Jumlah balasan terhadap komentar
+
+
+🔍 ANALISIS DATA UNTUK FRAMEWORK HABERMAS
+===========================================
+
+Setelah data dikumpulkan, gunakan framework ini untuk coding:
+
+JENIS ARGUMENTASI (dari comments):
+
+1. FACTUAL ARGUMENT
+   Contoh: "Menurut data dari Bappenas, program MBG ini telah
+           menjangkau 21 juta siswa di 2023..."
+   Indikator: Menyebut sumber, data spesifik, statistik
+   Code: FAC
+   
+2. NORMATIVE ARGUMENT
+   Contoh: "Program ini seharusnya diprioritaskan karena
+           pendidikan adalah hak asasi anak..."
+   Indikator: Berbicara tentang kebijakan, nilai, norma
+   Code: NOR
+   
+3. EMOTIONAL/PERSONAL TESTIMONY
+   Contoh: "Anak saya sekarang bisa fokus belajar karena
+           tidak lagi khawatir lapar..."
+   Indikator: Cerita pribadi, pengalaman langsung
+   Code: EMP
+   
+4. DIALOGICAL RESPONSE (DELIBERATION)
+   Contoh: "Saya setuju dengan pendapat sebelumnya, namun
+           menurut saya juga perlu mempertimbangkan..."
+   Indikator: Acknowledge argumen lain, respons kritis, dialogue
+   Code: DIA
+   
+5. NON-COMMUNICATIVE
+   Contoh: "Anda bodoh! Ini semua propaganda!"
+   Indikator: Ad hominem, spam, emosi tanpa argumen, trolling
+   Code: NON
+
+
+📈 QUANTITATIVE SUMMARY (untuk hasil penelitian):
+
+Setelah coding, hitung persentase:
+- % Factual Arguments = FAC count / total codes × 100
+- % Normative Arguments = NOR count / total codes × 100
+- % Personal Testimony = EMP count / total codes × 100
+- % Deliberative Responses = DIA count / total codes × 100
+- % Non-communicative = NON count / total codes × 100
+
+INDIKATOR DELIBERATIVE RATIONALITY TINGGI:
+✓ Tinggi: DIA + FAC (diskusi rasional dengan dialog)
+✓ Sedang: Campuran antara EMP, NOR, FAC
+✓ Rendah: Tinggi NON, kurang DIA
+
+
+💾 DATA MANAGEMENT BEST PRACTICES
+==================================
+
+1. BACKUP DATA
+   - Simpan copy di cloud (Google Drive, OneDrive)
+   - Gunakan version control jika di GitHub (PRIVATE repo)
+   
+2. SECURITY
+   - Jangan commit password ke git! Gunakan .env file:
+     Instagram.py:
+       from dotenv import load_dotenv
+       import os
+       load_dotenv()
+       username = os.getenv('INSTA_USER')
+       password = os.getenv('INSTA_PASS')
+   
+   - .env file:
+     INSTA_USER=your_username
+     INSTA_PASS=your_password
+   
+   - .gitignore:
+     .env
+     *.csv
+     scraper_log.txt
+
+3. ANONYMIZATION VERIFICATION
+   - Cek bahwa tidak ada actual usernames dalam final dataset
+   - Semua harus USER_XXXXX format
+   - Gunakan: grep -v "USER_" mbg_comments_data.csv
+     (harusnya tidak ada output)
+
+4. REPRODUCIBILITY
+   - Simpan scraper_log.txt dengan setiap run
+   - Dokumentasikan tanggal, jumlah posts/comments
+   - Include di appendix thesis untuk transparency
+
+
+⚠️ TROUBLESHOOTING UMUM
+=======================
+
+Error: "401 Unauthorized"
+→ Username/password salah atau akun terkunci
+→ Solusi: Cek ulang credentials, mungkin akun diminta 2FA
+
+Error: "429 Too Many Requests"
+→ Instagram rate-limiting akun Anda
+→ Solusi: Tunggu 24-48 jam atau gunakan akun berbeda
+         Atau increase DELAY_BETWEEN_REQUESTS di script
+
+Error: "Media not found"
+→ Post sudah dihapus atau akun private
+→ Solusi: Normal, script akan skip posting lanjut
+
+Network timeout:
+→ Koneksi internet kurang stabil
+→ Solusi: Run di VPS/cloud atau tempat dengan koneksi stabil
+         Tambah error handling dengan retry mechanism
+
+Script berhenti di tengah:
+→ Mungkin ada error atau internet terputus
+→ Solusi: Script akan log error, cek scraper_log.txt
+         Jalankan ulang - data sudah ter-save akan ter-append
+
+
+📝 UNTUK DOKUMENTASI THESIS
+============================
+
+Bagian Methods:
+"Data dikumpulkan menggunakan automated scraper (Instagrapi) 
+dari hashtag terkait MBG selama periode [tanggal]. Total 
+[X] posts dan [Y] comments dikumpulkan. Semua data personal 
+user di-anonymisasi menggunakan hash function untuk menjaga 
+privacy. Penelitian ini telah mendapat persetujuan dari [komite etika]."
+
+Bagian Appendix:
+- Include metadata JSON
+- Sample dari 5-10 posts asli (dengan username anonymized)
+- Screenshot dari CSV headers
+- Sampling strategy
+- Ethical approval memo/letter
+
+
+🎓 TIPS PUBLIKASI
+=================
+
+Jika akan publish dataset atau code:
+1. Anonymisasi SEMUA user information
+2. Dapatkan explicit permission dari IRB/ethics committee
+3. Publish data di Zenodo atau OSF dengan DOI
+4. Publish code di GitHub (private → public setelah publication)
+5. Include README dengan ethical considerations
+
+Contoh citation untuk reproducibility:
+"Data and code available at: https://zenodo.org/..."
+"Ethics approval: [Committee name, Reference #]"
+
+
+📞 KONTAK & RESOURCES
+=====================
+
+Dosen Pembimbing:
+Dr. Arie Qur'ania, M.Kom
+[Hubungi untuk ethical review & guidance]
+
+Komite Etika Universitas:
+[Hubungi untuk IRB approval sebelum scraping]
+
+Resources:
+- Instagrapi docs: https://github.com/subzeroid/instagrapi
+- Habermas readings: [Referensi dari proposal Anda]
+- Qualitative coding: NVivo, ATLAS.ti
+
+
+---
+Dokumen ini untuk keperluan akademik penelitian deliberative rationality.
+Pastikan selalu mematuhi etika penelitian dan privasi data.
